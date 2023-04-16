@@ -1,0 +1,18 @@
+[package]
+name = "ros2_node_manager_server"
+version = "0.1.0"
+edition = "2021"
+authors = ["Hussein Kabbout <kabbohus@hotmail.com>"]
+
+[dependencies]
+anyhow = {version = "1", features = ["backtrace"]}
+tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread", "time"] }
+
+[dependencies.rclrs]
+version = "0.3"
+
+[dependencies.rosidl_runtime_rs]
+version = "0.3"
+
+[dependencies.ros2_node_manager_interfaces]
+version = "*"
