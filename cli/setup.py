@@ -27,6 +27,7 @@ setup(
     entry_points={
         "ros2node.verb": [
             "stop = src.verb.stop:StopNodeVerb",
+            "start = src.verb.start:StartNodeVerb",
         ],
     },
 )

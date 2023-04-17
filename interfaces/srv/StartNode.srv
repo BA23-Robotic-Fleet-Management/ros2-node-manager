@@ -1,0 +1,7 @@
+# Start node by name
+
+string robot_name  # e.g. robot1, this name must be the same as the one that is passed to the node manager server
+string node_name  # e.g. free_fleet_client_node_robot_1
+---
+bool success  # Whether the node could be started or not
+
