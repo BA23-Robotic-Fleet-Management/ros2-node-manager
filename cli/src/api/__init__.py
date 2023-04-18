@@ -6,7 +6,7 @@ from rclpy.node import Node
 
 class NodeManagerClient(Node):
     def __init__(self):
-        super().__init__("ros2_node_manager_client")
+        super().__init__("ros2_node_manager_cli")
 
     def stop_node(self, robot_name,  node_name):
         client = self.create_client(StopNode, "stop_node")

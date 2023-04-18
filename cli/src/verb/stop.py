@@ -1,6 +1,6 @@
 import rclpy
-from ros2cli.verb import VerbExtension
 from src.api import NodeManagerClient
+from src.verb import VerbExtension
 
 
 class StopNodeVerb(VerbExtension):
