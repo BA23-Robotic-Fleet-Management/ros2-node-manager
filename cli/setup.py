@@ -25,11 +25,11 @@ setup(
     license="Apache License, Version 2.0",
     tests_require=["pytest"],
     entry_points={
-        'ros2cli.command': [
-            'node-manager = src.command.manager:NodeManagerCommand',
+        "ros2cli.command": [
+            "node-manager = src.command.manager:NodeManagerCommand",
         ],
-        'ros2cli.extension_point': [
-            'src.verb = src.verb:VerbExtension',
+        "ros2cli.extension_point": [
+            "src.verb = src.verb:VerbExtension",
         ],
         "ros2_node_manager_cli.verb": [
             "stop = src.verb.stop:StopNodeVerb",

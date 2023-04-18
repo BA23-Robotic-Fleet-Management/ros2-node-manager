@@ -9,16 +9,16 @@ class NodeManagerCommand(CommandExtension):
         self._subparser = parser
         # add arguments and sub-commands of verbs
         add_subparsers_on_demand(
-            parser, cli_name, '_verb', 'ros2_node_manager_cli.verb', required=False)
+            parser, cli_name, "_verb", "ros2_node_manager_cli.verb", required=False
+        )
 
     def main(self, *, parser, args):
-        if not hasattr(args, '_verb'):
+        if not hasattr(args, "_verb"):
             # in case no verb was passed
             self._subparser.print_help()
             return 0
 
-        extension = getattr(args, '_verb')
+        extension = getattr(args, "_verb")
 
         # call the verb's main method
         return extension.main(args=args)
-
