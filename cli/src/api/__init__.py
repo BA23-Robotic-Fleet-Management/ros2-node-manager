@@ -9,12 +9,11 @@ class NodeManagerClient(Node):
         super().__init__("ros2_node_manager_cli")
 
     def stop_node(self, robot_name,  node_name):
-        client = self.create_client(StopNode, "stop_node")
+        client = self.create_client(StopNode, f"{robot_name}_stop_node")
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info("Trying to connect to service StopNode...")
 
         request = StopNode.Request()
-        request.robot_name = robot_name
         request.node_name = node_name
 
         future = client.call_async(request)
@@ -23,12 +22,11 @@ class NodeManagerClient(Node):
 
 
     def start_node(self, robot_name,  node_name):
-        client = self.create_client(StartNode, "start_node")
+        client = self.create_client(StartNode, f"{robot_name}_start_node")
         while not client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info("Trying to connect to service StartNode...")
 
         request = StartNode.Request()
-        request.robot_name = robot_name
         request.node_name = node_name
 
         future = client.call_async(request)
