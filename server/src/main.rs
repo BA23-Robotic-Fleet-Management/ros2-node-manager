@@ -8,7 +8,7 @@ fn handle_stop_node(
     _request_header: &rclrs::rmw_request_id_t,
     request: StopNode_Request,
 ) -> StopNode_Response {
-    println!("Someone requested to stop: {}", request.node_name);
+    log::info!("Someone requested to stop: {}", request.node_name);
     StopNode_Response { success: true }
 }
 
@@ -16,7 +16,7 @@ fn handle_start_node(
     _request_header: &rclrs::rmw_request_id_t,
     request: StartNode_Request,
 ) -> StartNode_Response {
-    println!("Someone requested to start: {}", request.node_name);
+    log::info!("Someone requested to start: {}", request.node_name);
     StartNode_Response { success: true }
 }
 
@@ -28,6 +28,7 @@ struct Args {
 }
 
 fn main() -> Result<(), Error> {
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     let args = Args::parse();
 
     let context = rclrs::Context::new(env::args())?;

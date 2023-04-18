@@ -8,6 +8,8 @@ authors = ["Hussein Kabbout <kabbohus@hotmail.com>"]
 anyhow = {version = "1", features = ["backtrace"]}
 tokio = { version = "1", features = ["macros", "rt", "rt-multi-thread", "time"] }
 clap = { version = "4", features = ["derive"] }
+log = "0.4.17"
+env_logger = "0.10.0"
 
 [dependencies.rclrs]
 version = "0.3"
