@@ -23,11 +23,18 @@ colcon build --parallel-workers 4 --symlink-install
 
 The CLI tools is directly integrated in `ros2cli`.
 
+Start node:
+
+```
+source ros2-node-manager/install/setup.bash
+ros2 node-manager start ROBOTER_NAME NODE_NAME
+```
+
 Stop node:
 
 ```
 source ros2-node-manager/install/setup.bash
-ros2 node stop NODE_NAME
+ros2 node-manager stop ROBOTER_NAME NODE_NAME
 ```
 
 ### Node manager server
@@ -38,7 +45,7 @@ Start server:
 
 ```
 source ros2-node-manager/install/setup.bash
-ros2 run ros2_node_manager_server ros2_node_manager_server
+ros2 run ros2_node_manager_server ros2_node_manager_server --robot-name ROBOTER_NAME
 ```
 
 
