@@ -2,6 +2,7 @@ use std::env;
 use ros2_node_manager_interfaces::srv::{StopNode,StopNode_Request,StopNode_Response};
 use ros2_node_manager_interfaces::srv::{StartNode,StartNode_Request,StartNode_Response};
 use anyhow::{Error, Result};
+use clap::Parser;
 
 fn handle_stop_node(
     _request_header: &rclrs::rmw_request_id_t,
@@ -23,16 +24,25 @@ fn handle_start_node(
     }
 }
 
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(long)]
+    robot_name: String,
+}
+
 fn main() -> Result<(), Error> {
+    let args = Args::parse();
+
     let context = rclrs::Context::new(env::args())?;
-    let robot_name = "robot1";
-    let mut node = rclrs::create_node(&context, &format!("{}_node_manager_server", robot_name))?;
+    let mut node = rclrs::create_node(&context, &format!("{}_node_manager_server", args.robot_name))?;
     // Register stop node service
     let stop_node_service = node
-        .create_service::<StopNode, _>(&format!("{}_stop_node", robot_name), handle_stop_node)?;
+        .create_service::<StopNode, _>(&format!("{}_stop_node", args.robot_name), handle_stop_node)?;
     // Register start node service
     let start_node_service = node
-        .create_service::<StartNode, _>(&format!("{}_start_node", robot_name), handle_start_node)?;
+        .create_service::<StartNode, _>(&format!("{}_start_node", args.robot_name), handle_start_node)?;
 
     println!("Starting server");
     rclrs::spin(&node).map_err(|err| err.into())
