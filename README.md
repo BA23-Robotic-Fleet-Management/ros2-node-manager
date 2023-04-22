@@ -37,6 +37,9 @@ source ros2-node-manager/install/setup.bash
 ros2 node-manager stop ROBOTER_NAME NODE_NAME
 ```
 
+The optional arguments `--stop_time`, when stopping a node, or `--start_time`, when starging a node, can be defined
+to extend the time used to check if the node could be started or stopped successfully.
+
 ### Node manager server
 
 The node manager server lives on each robot and controls nodes via systemd unit files.

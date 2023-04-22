@@ -1,3 +1,5 @@
+mod systemd;
+
 use anyhow::{Error, Result};
 use clap::Parser;
 use ros2_node_manager_interfaces::srv::{StartNode, StartNode_Request, StartNode_Response};
@@ -9,7 +11,9 @@ fn handle_stop_node(
     request: StopNode_Request,
 ) -> StopNode_Response {
     log::info!("Someone requested to stop: {}", request.node_name);
-    StopNode_Response { success: true }
+    StopNode_Response {
+        success: systemd::stop_unit(request.node_name, request.stop_time),
+    }
 }
 
 fn handle_start_node(
@@ -17,7 +21,9 @@ fn handle_start_node(
     request: StartNode_Request,
 ) -> StartNode_Response {
     log::info!("Someone requested to start: {}", request.node_name);
-    StartNode_Response { success: true }
+    StartNode_Response {
+        success: systemd::start_unit(request.node_name, request.start_time),
+    }
 }
 
 #[derive(Parser, Debug)]
@@ -37,16 +43,16 @@ fn main() -> Result<(), Error> {
         &format!("{}_node_manager_server", args.robot_name),
     )?;
     // Register stop node service
-    let stop_node_service = node.create_service::<StopNode, _>(
+    let _stop_node_service = node.create_service::<StopNode, _>(
         &format!("{}_stop_node", args.robot_name),
         handle_stop_node,
     )?;
     // Register start node service
-    let start_node_service = node.create_service::<StartNode, _>(
+    let _start_node_service = node.create_service::<StartNode, _>(
         &format!("{}_start_node", args.robot_name),
         handle_start_node,
     )?;
 
-    println!("Starting server");
+    log::info!("Starting server");
     rclrs::spin(&node).map_err(|err| err.into())
 }

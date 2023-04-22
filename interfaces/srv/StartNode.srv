@@ -1,6 +1,7 @@
 # Start node by name
 
 string node_name  # e.g. free_fleet_client_node_robot_1
+uint64 start_time  # How long it takes for the application to start correctly
 ---
 bool success  # Whether the node could be started or not
 
