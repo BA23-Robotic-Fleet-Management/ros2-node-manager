@@ -1,0 +1,5 @@
+# Get a list of all nodes
+
+---
+string nodes  # String representation of all nodes that are managed by the node manager
+

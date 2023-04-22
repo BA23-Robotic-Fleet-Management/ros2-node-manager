@@ -6,4 +6,4 @@ Type=exec
 ExecStart=bash -c "source /home/roscon/dev/fleet_manager/install/setup.bash; /opt/ros/humble/bin/ros2 launch ff_tb3_gz ff_server.launch.xml"
 
 [Install]
-WantedBy=default.target
+WantedBy=ros2-node-manager.target

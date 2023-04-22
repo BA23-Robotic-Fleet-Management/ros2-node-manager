@@ -34,6 +34,7 @@ setup(
         "ros2_node_manager_cli.verb": [
             "stop = src.verb.stop:StopNodeVerb",
             "start = src.verb.start:StartNodeVerb",
+            "list-nodes = src.verb.list:ListNodesVerb",
         ],
     },
 )
