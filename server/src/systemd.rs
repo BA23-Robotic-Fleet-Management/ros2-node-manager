@@ -75,8 +75,9 @@ pub fn list_nodes() -> String {
         // Skip the first line by creating a slice from the Vec
         String::from_utf8(output.stdout[index_first_line + 1..].to_vec())
             .unwrap_or(String::new())
-            // Remove wierd charecter that we don't want in the output
+            // Remove stuff that we don't want in the output
             .replace("└─", "")
+            .replace(".service", "")
             // Remove any trailing whitespace / new line
             .trim()
             .to_string()
