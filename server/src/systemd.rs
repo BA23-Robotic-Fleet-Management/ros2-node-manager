@@ -4,6 +4,7 @@ use std::time::Duration;
 
 static NODE_MANAGER_TARGET_UNIT: &str = "ros2-node-manager.target";
 
+// Start a systemd unit and return whether the operation was successfull
 pub fn start_unit(name: String, start_time: u64) -> bool {
     let mut success = false;
 
@@ -29,6 +30,7 @@ pub fn start_unit(name: String, start_time: u64) -> bool {
     success
 }
 
+// Stop a systemd unit and return whether the operation was successfull
 pub fn stop_unit(name: String, stop_time: u64) -> bool {
     let mut success = false;
 
@@ -54,6 +56,8 @@ pub fn stop_unit(name: String, stop_time: u64) -> bool {
     success
 }
 
+// Get a list of all nodes that are controlled by the node manager
+// The list is returned as a String
 pub fn list_nodes() -> String {
     if let Ok(output) = Command::new("systemctl")
         // Activate colors

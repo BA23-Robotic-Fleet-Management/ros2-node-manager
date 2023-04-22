@@ -3,9 +3,14 @@ from ros2cli.command import CommandExtension
 
 
 class NodeManagerCommand(CommandExtension):
-    """Node manager sub-commands."""
+    """
+    Node manager sub-commands
+    """
 
     def add_arguments(self, parser, cli_name):
+        """
+        Init arguments for sub-command
+        """
         self._subparser = parser
         # add arguments and sub-commands of verbs
         add_subparsers_on_demand(
@@ -13,6 +18,9 @@ class NodeManagerCommand(CommandExtension):
         )
 
     def main(self, *, parser, args):
+        """
+        Main entry point
+        """
         if not hasattr(args, "_verb"):
             # in case no verb was passed
             self._subparser.print_help()

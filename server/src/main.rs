@@ -7,6 +7,7 @@ use ros2_node_manager_interfaces::srv::{StartNode, StartNode_Request, StartNode_
 use ros2_node_manager_interfaces::srv::{StopNode, StopNode_Request, StopNode_Response};
 use std::env;
 
+// Handler for a StopNode request
 fn handle_stop_node(
     _request_header: &rclrs::rmw_request_id_t,
     request: StopNode_Request,
@@ -17,6 +18,7 @@ fn handle_stop_node(
     }
 }
 
+// Handler for a StartNode request
 fn handle_start_node(
     _request_header: &rclrs::rmw_request_id_t,
     request: StartNode_Request,
@@ -27,6 +29,7 @@ fn handle_start_node(
     }
 }
 
+// Handler for a ListNodes request
 fn handle_list_nodes(
     _request_header: &rclrs::rmw_request_id_t,
     _request: ListNodes_Request,
@@ -36,6 +39,7 @@ fn handle_list_nodes(
     }
 }
 
+// Definition of the command line arguments
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -43,10 +47,13 @@ struct Args {
     robot_name: String,
 }
 
+// Main function
 fn main() -> Result<(), Error> {
+    // Init logger
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    // Parse command line arguments
     let args = Args::parse();
-
+    // Init ros2 node
     let context = rclrs::Context::new(env::args())?;
     let mut node = rclrs::create_node(
         &context,
@@ -67,7 +74,7 @@ fn main() -> Result<(), Error> {
         &format!("{}_list_nodes", args.robot_name),
         handle_list_nodes,
     )?;
-
+    // Start server
     log::info!("Starting server");
     rclrs::spin(&node).map_err(|err| err.into())
 }

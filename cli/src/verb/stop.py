@@ -7,6 +7,9 @@ class StopNodeVerb(VerbExtension):
     """Stop a node by name"""
 
     def add_arguments(self, parser, cli_name):
+        """
+        Specify arguments for the stop verb
+        """
         parser.add_argument("robot_name", help="Name of the robot")
         parser.add_argument(
             "node_name", help="Name of the ROS2 node that you want to stop"
@@ -21,6 +24,9 @@ class StopNodeVerb(VerbExtension):
         # TODO: Add auto completion
 
     def main(self, *, args):
+        """
+        Main
+        """
         rclpy.init()
         client = NodeManagerClient()
         result = client.stop_node(args.robot_name, args.node_name, args.stop_time)

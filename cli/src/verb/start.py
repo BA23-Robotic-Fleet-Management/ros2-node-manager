@@ -7,6 +7,9 @@ class StartNodeVerb(VerbExtension):
     """Start a node by name"""
 
     def add_arguments(self, parser, cli_name):
+        """
+        Specify arguments for the start verb
+        """
         parser.add_argument("robot_name", help="Name of the robot")
         parser.add_argument(
             "node_name", help="Name of the ROS2 node that you want to start"
@@ -20,6 +23,9 @@ class StartNodeVerb(VerbExtension):
         # TODO: Add auto completion
 
     def main(self, *, args):
+        """
+        Main
+        """
         rclpy.init()
         client = NodeManagerClient()
         result = client.start_node(args.robot_name, args.node_name, args.start_time)
