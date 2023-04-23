@@ -1,11 +1,15 @@
+mod daemon;
 mod systemd;
 
 use anyhow::{Error, Result};
 use clap::Parser;
+use dbus::arg::PropMap;
+use dbus::blocking::SyncConnection;
 use ros2_node_manager_interfaces::srv::{ListNodes, ListNodes_Request, ListNodes_Response};
 use ros2_node_manager_interfaces::srv::{StartNode, StartNode_Request, StartNode_Response};
 use ros2_node_manager_interfaces::srv::{StopNode, StopNode_Request, StopNode_Response};
 use std::env;
+use std::sync::Arc;
 
 // Handler for a StopNode request
 fn handle_stop_node(
@@ -22,10 +26,11 @@ fn handle_stop_node(
 fn handle_start_node(
     _request_header: &rclrs::rmw_request_id_t,
     request: StartNode_Request,
+    connection: Arc<SyncConnection>,
 ) -> StartNode_Response {
     log::info!("Someone requested to start: {}", request.node_name);
     StartNode_Response {
-        success: systemd::start_unit(request.node_name, request.start_time),
+        success: systemd::start_unit::<PropMap>(connection, request.node_name),
     }
 }
 
@@ -37,6 +42,13 @@ fn handle_list_nodes(
     ListNodes_Response {
         nodes: systemd::list_nodes(),
     }
+}
+
+fn dbus_handler_wrapper(
+    connection: Arc<SyncConnection>,
+    handler: fn(&rclrs::rmw_request_id_t, StartNode_Request, Arc<SyncConnection>) -> StartNode_Response,
+) -> Box<dyn Fn(&rclrs::rmw_request_id_t, StartNode_Request) -> StartNode_Response + Send> {
+    Box::new(move |x, y| handler(x, y, connection.clone()))
 }
 
 // Definition of the command line arguments
@@ -53,6 +65,11 @@ fn main() -> Result<(), Error> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     // Parse command line arguments
     let args = Args::parse();
+    // Create dbus session before starting daemon
+    // We do it in this order because we want to control the systemd units as root
+    // but we don't want the ros2 node to run as root.
+    let dbus_connection = Arc::new(SyncConnection::new_system().unwrap());
+    daemon::NodeManagerDaemon::start();
     // Init ros2 node
     let context = rclrs::Context::new(env::args())?;
     let mut node = rclrs::create_node(
@@ -67,7 +84,7 @@ fn main() -> Result<(), Error> {
     // Register start node service
     let _start_node_service = node.create_service::<StartNode, _>(
         &format!("{}_start_node", args.robot_name),
-        handle_start_node,
+        dbus_handler_wrapper(dbus_connection.clone(), handle_start_node),
     )?;
     // Register list nodes service
     let _list_nodes_service = node.create_service::<ListNodes, _>(

@@ -2,33 +2,44 @@ use std::process::Command;
 use std::thread;
 use std::time::Duration;
 
+use dbus;
+use dbus::arg::PropMap;
+use dbus::arg::RefArg;
+use dbus::blocking::SyncConnection;
+use dbus::Path;
+use std::sync::Arc;
+
 static NODE_MANAGER_TARGET_UNIT: &str = "ros2-node-manager.target";
 
+static DBUS_SYSTEMD_DESTINATION: &str = "org.freedesktop.systemd1";
+static DBUS_SYSTEMD_OBJECT_PATH: &str = "/org/freedesktop/systemd1";
+static DBUS_SYSTEMD_MANAGER_INTERFACE: &str = "org.freedesktop.systemd1.Manager";
+
 // Start a systemd unit and return whether the operation was successfull
-pub fn start_unit(name: String, start_time: u64) -> bool {
-    let mut success = false;
+// pub fn start_unit(name: String, start_time: u64) -> bool {
+//     let mut success = false;
 
-    Command::new("systemctl")
-        .arg("--user")
-        .arg("start")
-        .arg(&name)
-        .spawn();
+//     Command::new("systemctl")
+//         .arg("--user")
+//         .arg("start")
+//         .arg(&name)
+//         .spawn();
 
-    // Wait until process is stopped
-    thread::sleep(Duration::from_secs(start_time));
+//     // Wait until process is stopped
+//     thread::sleep(Duration::from_secs(start_time));
 
-    let result = Command::new("systemctl")
-        .arg("--user")
-        .arg("is-active")
-        .arg(&name)
-        .status();
+//     let result = Command::new("systemctl")
+//         .arg("--user")
+//         .arg("is-active")
+//         .arg(&name)
+//         .status();
 
-    if let Ok(exit_status) = result {
-        success = exit_status.success();
-    }
+//     if let Ok(exit_status) = result {
+//         success = exit_status.success();
+//     }
 
-    success
-}
+//     success
+// }
 
 // Stop a systemd unit and return whether the operation was successfull
 pub fn stop_unit(name: String, stop_time: u64) -> bool {
@@ -84,4 +95,28 @@ pub fn list_nodes() -> String {
     } else {
         String::new()
     }
+}
+
+pub fn start_unit<T: for<'z> dbus::arg::Get<'z> + dbus::arg::Arg + std::fmt::Debug>(
+    connection: Arc<SyncConnection>,
+    name: String,
+) -> bool {
+    let result = connection
+        .with_proxy(
+            DBUS_SYSTEMD_DESTINATION,
+            Path::new(DBUS_SYSTEMD_OBJECT_PATH).unwrap(),
+            Duration::new(5, 0),
+        )
+        // See: https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html#Methods
+        // for more infomation on "StartUnit"
+        .method_call(
+            DBUS_SYSTEMD_MANAGER_INTERFACE,
+            "StartUnit",
+            (name + ".service", "replace"),
+        )
+        .map(|r: (T,)| r.0);
+
+    println!("{:?}", result);
+
+    false
 }
