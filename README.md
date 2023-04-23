@@ -50,7 +50,7 @@ to extend the time used to check if the node could be started or stopped success
 ### Node manager server
 
 The node manager server lives on each robot and controls nodes via systemd unit files.
-An [example unit file](./misc/free-fleet-server.service) can be found in [misc](./misc)
+An [example unit file](./server/misc/free-fleet-server.service) can be found in [misc](./server/misc)
 All unit files should be stored in `~/.local/share/systemd/user/`.
 If you want your unit file to be found by the `list-nodes` command, then you also have to
 enable the systemd unit with `systemctl --user enable UNIT_NAME`.
