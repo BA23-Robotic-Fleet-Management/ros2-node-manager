@@ -6,8 +6,8 @@
   <description>
     CLI with which ROS2 nodes that are running on a robot can be started / stopped from anywhere
   </description>
-  <author email="kabbohus@students.zhaw.ch">Hussein Kabbout</author>
-  <maintainer email="kabbohus@students.zhaw.ch">Hussein Kabbout</maintainer>
+  <author email="hussein.kabbout@hotmail.com">Hussein Kabbout</author>
+  <maintainer email="hussein.kabbout@hotmail.com">Hussein Kabbout</maintainer>
   <license>Apache License 2.0</license>
 
   <depend>ros2cli</depend>

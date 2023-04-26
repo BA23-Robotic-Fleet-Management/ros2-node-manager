@@ -6,8 +6,8 @@
   <name>ros2_node_manager_server</name>
   <version>0.1.0</version>
   <description>ROS2 node that provides a service with which you can stop nodes on the current machine via systemd unit files</description>
-  <author email="kabbohus@students.zhaw.ch">Hussein Kabbout</author>
-  <maintainer email="kabbohus@students.zhaw.ch">Hussein Kabbout</maintainer>
+  <author email="hussein.kabbout@hotmail.com">Hussein Kabbout</author>
+  <maintainer email="hussein.kabbout@hotmail.com">Hussein Kabbout</maintainer>
   <license>Apache License 2.0</license>
 
   <build_depend>ros2_node_manager_interfaces</build_depend>
