@@ -1,0 +1,44 @@
+name: Build packages
+
+on:
+  push:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ba23-robotic-fleet-management/ros2-node-manager-ci-base:main
+    steps:
+      - uses: actions/checkout@master
+
+      # This is required for cargo to find amend-build
+      - name: Add cargo bin to PATH
+        run: echo "/root/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Build packages
+        shell: bash
+        run: |
+          # Source ros2-rust
+          source /root/workspace/install/setup.bash
+          colcon build
+
+      - name: Upload server binary to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ros2-node-manager-server
+          path: ./install/ros2_node_manager_server/lib/ros2_node_manager_server/ros2_node_manager_server
+
+      - name: Upload message interface shared library to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ros2-node-manager-interface-shared-lib
+          path: install/ros2_node_manager_interfaces/
+
+      - name: Upload cli to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ros2-node-manager-cli
+          path: install/ros2_node_manager_cli/
