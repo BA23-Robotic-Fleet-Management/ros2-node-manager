@@ -1,0 +1,22 @@
+FROM ubuntu:jammy
+
+ARG ROS_USER=ros
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DOMAIN_ID=1
+
+RUN apt-get update && apt-get upgrade -y
+# Install ROS
+RUN apt-get update && apt-get install software-properties-common -y && \
+    add-apt-repository universe && \
+    apt-get install curl -y && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y ros-humble-ros-base ros-dev-tools
+# ROS2 cli does not like to be run as root
+RUN adduser $ROS_USER
+WORKDIR /usr/src/app
+COPY . .
+USER ros
+WORKDIR /home/ros
+RUN echo "source /usr/src/app/install/setup.bash" >> /home/ros/.bashrc
