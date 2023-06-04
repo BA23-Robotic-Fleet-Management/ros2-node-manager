@@ -1,10 +1,11 @@
-FROM ubuntu:jammy
+FROM phusion/baseimage:jammy-1.0.1
 
 ARG ROS_USER=ros
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DOMAIN_ID=1
 
 RUN apt-get update && apt-get upgrade -y
+
 # Install ROS
 RUN apt-get update && apt-get install software-properties-common -y && \
     add-apt-repository universe && \
@@ -13,10 +14,19 @@ RUN apt-get update && apt-get install software-properties-common -y && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
     apt-get update && \
     apt-get install -y ros-humble-ros-base ros-dev-tools
-# ROS2 cli does not like to be run as root
-RUN adduser $ROS_USER
+
+# Install zenoh-bridge-dds
+RUN apt-get update && apt-get install -y unzip && \
+    curl -sSL https://github.com/eclipse-zenoh/zenoh-plugin-dds/releases/download/0.7.0-rc/zenoh-bridge-dds-0.7.0-rc-x86_64-unknown-linux-gnu.zip -o /root/zenoh-bridge-dds.zip && \
+    unzip /root/zenoh-bridge-dds.zip -d /usr/bin/ && \
+    chmod +x /usr/bin/zenoh-bridge-dds
+# Create config directory
+RUN mkdir /etc/zenoh-bridge-dds
+# Make sure zenoh bridge is started when the container is created
+RUN mkdir /etc/service/zenoh-bridge-dds
+RUN echo "exec zenoh-bridge-dds --config /etc/zenoh-bridge-dds/config.json5" > /etc/service/zenoh-bridge-dds/run && chmod +x /etc/service/zenoh-bridge-dds/run
+
 WORKDIR /usr/src/app
+# The client is built in the CI and then copied into the image
 COPY . .
-USER ros
-WORKDIR /home/ros
-RUN echo "source /usr/src/app/install/setup.bash" >> /home/ros/.bashrc
+RUN echo "source /usr/src/app/install/setup.bash" >> /root/.bashrc
