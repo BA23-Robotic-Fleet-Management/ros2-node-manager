@@ -1,20 +1,20 @@
-# ROS2 node manager
+# ROS2 Node Manager
 
-This repository contains all components of the ROS2 node manager.
+This repository contains all the components of the ROS2 node manager.
+The node manager allows users to centrally manage the state of individual nodes on the remote fleet.
+This could later on be used to shut down nodes that are not currently required, for example the image recognition software during charging.
 
 ## Requirements
 
-- ros2 humble
-- rust + cargo (https://www.rust-lang.org/tools/install)
-- ros2_rust (https://github.com/ros2-rust/ros2_rust#sounds-great-how-can-i-try-this-out)
+- ROS 2 humble
+- Rust and cargo (https://www.rust-lang.org/tools/install)
+- `ros2_rust` installed to `~/ros2_rust` (https://github.com/ros2-rust/ros2_rust#sounds-great-how-can-i-try-this-out)
 
 ## Build
 
 ```bash
 cd ros2-node-manager/
 source /opt/ros/humble/setup.bash
-# This command assumes that ros2_rust was installed in ~/ros2_rust
-# and not in a directory called `workspace` like in the linked documentation
 source ~/ros2_rust/install/setup.bash
 colcon build --parallel-workers 4 --symlink-install
 ```
@@ -23,44 +23,42 @@ colcon build --parallel-workers 4 --symlink-install
 
 ### CLI
 
-The CLI tools are directly integrated in `ros2cli`.
+The CLI tools are directly integrated in the `ros2cli`.
 
-List nodes:
-
-```bash
-source ros2-node-manager/install/setup.bash
-ros2 node-manager list-nodes ROBOTER_NAME
-```
-
-Start node:
+List all managed nodes, including their state:
 
 ```bash
 source ros2-node-manager/install/setup.bash
-ros2 node-manager start ROBOTER_NAME NODE_NAME
+ros2 node-manager list-nodes ROBOT_NAME
 ```
 
-Stop node:
+Start a node:
 
 ```bash
 source ros2-node-manager/install/setup.bash
-ros2 node-manager stop ROBOTER_NAME NODE_NAME
+ros2 node-manager start ROBOT_NAME NODE_NAME
 ```
 
-The optional arguments `--stop_time`, when stopping a node, or `--start_time`, when starging a node, can be defined
-to extend the time used to check if the node could be started or stopped successfully.
+Stop a node:
 
-### Node manager server
+```bash
+source ros2-node-manager/install/setup.bash
+ros2 node-manager stop ROBOT_NAME NODE_NAME
+```
 
-The node manager server lives on each robot and controls nodes via systemd unit files.
-An [example unit file](./server/misc/free-fleet-server.service) can be found in [misc](./server/misc).
+The optional argument `--start_time` (or the respective `--stop_time`) sets the timeout after which the state of the node is checked.
+
+### Node Manager Server
+
+The node manager server lives on each robot and controls the ROS 2nodes using systemd unit files.
+An example unit file can be found in [misc](./server/misc).
 All unit files should be stored in `~/.local/share/systemd/user/`.
-If you want your unit file to be found by the `list-nodes` command, then you also have to
-enable the systemd unit with `systemctl --user enable UNIT_NAME`.
-This will install the systemd unit in the target `ros2-node-manager`.
+If you want your unit file to be found by the `list-nodes` command, then you must enable the systemd unit with `systemctl --user enable UNIT_NAME`.
+This will install the systemd unit in the `ros2-node-manager` target.
 
-Start server:
+Start the server:
 
 ```bash
 source ros2-node-manager/install/setup.bash
-ros2 run ros2_node_manager_server ros2_node_manager_server --robot-name ROBOTER_NAME
+ros2 run ros2_node_manager_server ros2_node_manager_server --robot-name ROBOT_NAME
 ```
